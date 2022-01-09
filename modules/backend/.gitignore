@@ -1,0 +1,5 @@
+.terraform* 
+*.plan* 
+*.out* 
+*.json 
+*.son
