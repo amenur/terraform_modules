@@ -1,8 +1,8 @@
 
-variable "key_rotation" {
+variable "enable_key_rotation" {
     type = bool
     description = "(optional) Enable (true) / Disable(false), the rotation of the key. Default = 'Enable' (true)"
-    default = true
+    #default = true
 }
 
 variable "deletion_windows_day" {
