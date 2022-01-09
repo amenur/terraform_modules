@@ -38,3 +38,9 @@ variable "write_capacity" {
   default = 1
 }
 
+variable "dynamodb_encryption" {
+  type = bool
+  description = "(optional) describe your variable"
+  default = true
+}
+
