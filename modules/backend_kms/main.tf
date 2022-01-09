@@ -48,7 +48,7 @@ resource "aws_dynamodb_table" "terraform_state" {
 
  server_side_encryption {
    enabled = var.dynamodb_encryption
-   kms_key_arn = var.dynamodb_encryption ? aws_kms_key.kms_key.arn : null 
+   kms_key_arn = aws_kms_key.kms_key.arn
  }
 
  attribute {
