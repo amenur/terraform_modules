@@ -17,11 +17,11 @@ resource "aws_vpc" "this" {
 }
 
 resource "aws_subnet" "public" {
-  count                           = length(var.public_cidr_block)
+  for_each = var.cidr_block
   vpc_id                          = aws_vpc.this.id
-  cidr_block                      = cidrsubnet(var.public_cidr_block, var.newbits, local.az_names.name_sufix)
-  availability_zone_id            = data.aws_availability_zones.available[count.index]
-  ipv6_cidr_block                 = cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, count.index)
+  cidr_block                      = each.value
+  availability_zone_id            = data.aws_availability_zones.available[each.key]
+  ipv6_cidr_block                 = cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, each.key)
   assign_ipv6_address_on_creation = true
 
 
