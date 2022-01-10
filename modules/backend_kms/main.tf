@@ -18,7 +18,7 @@ resource "aws_s3_bucket" "terraform_state" {
   }
 
   logging {
-    target_bucket = aws_s3_bucket.terraform_state.id
+    target_bucket = var.s3_bucket_name
     target_prefix = var.log_prefix
   }
   lifecycle {
