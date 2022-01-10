@@ -5,7 +5,7 @@ data "aws_availability_zones" "available" {
 locals {
   subnet_prefix = "sn"
   az_names = data.aws_availability_zones.available.names
-  az_ids = data.aws_availability_zones.available.id
+  az_ids = data.aws_availability_zones.available.zone_ids
 }
 resource "aws_vpc" "this" {
   cidr_block                       = var.cidr_block
