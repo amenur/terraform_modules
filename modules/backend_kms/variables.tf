@@ -44,3 +44,9 @@ variable "dynamodb_encryption" {
   default     = true
 }
 
+variable "log_prefix" {
+  type = string
+  description = "(optional) Prefix for path in the bucket to store logs"
+  default = "logs/"
+  
+}

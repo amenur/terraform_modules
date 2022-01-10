@@ -17,6 +17,11 @@ resource "aws_s3_bucket" "terraform_state" {
     enabled = true
   }
 
+  logging {
+    count = var.enable_logging ? 1 : 0
+    target_bucket = aws_s3_bucket.terraform_state.id
+    target_prefix = var.log_prefix
+  }
   lifecycle {
     prevent_destroy = true
   }
