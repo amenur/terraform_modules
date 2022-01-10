@@ -12,7 +12,6 @@ variable "cidr_block" {
 variable "public_cidr_block" {
   type        = map(string)
   description = "(required) List of public subnets ip's"
-  default     = ["10.16.48.0/20", "10.16.112.0/20", "10.16.176.0/20"]
 }
 
 
