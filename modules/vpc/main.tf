@@ -27,5 +27,6 @@ resource "aws_subnet" "public" {
 
   tags = {
     "Name" = "${local.subnet_prefix}-${var.subnet_names[each.key]}-${local.az_names[each.key]}",
+    "Tags" = var.project_tags
   }
 }
