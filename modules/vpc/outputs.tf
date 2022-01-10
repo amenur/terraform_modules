@@ -11,11 +11,11 @@ output "vpc_arn" {
 }
 
 output "public_id" {
-    value = aws_subnet.public.id
+    value = aws_subnet.public.id[*]
 }
 
 output "public_arn" {
-    value = aws_subnet.public.arn
+    value = aws_subnet.public.arn[*]
 }
 
 output "public_ips" {
