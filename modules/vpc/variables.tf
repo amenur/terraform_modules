@@ -33,15 +33,15 @@ variable "subnet_names" {
 
 }
 
-variable "project_tags" {
-  type = map(string)
-  description = "(optional) describe your variable"
-  default = {
-    "Project_Name" = ""
-    "Environment" = ""
-    "Cost_center" = ""
-  }
-}
+# variable "project_tags" {
+#   type = map(string)
+#   description = "(optional) describe your variable"
+#   default = {
+#     "Project_Name" = ""
+#     "Environment" = ""
+#     "Cost_center" = ""
+#   }
+# }
 
 # variable "tags" {
 #     description = "(optional) describe your variable"
