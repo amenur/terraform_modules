@@ -25,10 +25,9 @@ variable "subnet_names" {
     type = map(string)
     description = "(required) List of subnets names"
     default = {
-        0 = "reserved"
-        1 = "db"
-        2 = "app"
-        3 = "web"
+        0 = "web-A"
+        1 = "web-B"
+        2 = "web-C"
     }
 
 }
