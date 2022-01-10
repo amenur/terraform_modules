@@ -3,7 +3,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  subnet_prefix = "sn-"
+  subnet_prefix = "sn"
   az_names = data.aws_availability_zones.available.names
 }
 resource "aws_vpc" "this" {
@@ -25,6 +25,8 @@ resource "aws_subnet" "public" {
   assign_ipv6_address_on_creation = true
 
 
-  #tags = var.tags
-
+  tags = merge(
+    "${local.subnet_prefix}-${var.subnet_names[each.key]}",
+    var.project_tags,
+  )
 }

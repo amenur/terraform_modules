@@ -21,17 +21,27 @@ variable "public_cidr_block" {
 #     default = [ "10.16.0.0/20", "10.16.16.0/20", "10.16.32.0/20", "10.16.64.0/20", "10.16.80.0/20", "10.16.96.0/20", "10.16.128.0/20", "10.16.144.0/20", "10.16.160.0/20" ]
 # }
 
-# variable "subnet_names" {
-#     type = map
-#     description = "(required) List of subnets names"
-#     default = {
-#         0 = "reserved"
-#         1 = "db"
-#         2 = "app"
-#         3 = "web"
-#     }
+variable "subnet_names" {
+    type = map(string)
+    description = "(required) List of subnets names"
+    default = {
+        0 = "reserved"
+        1 = "db"
+        2 = "app"
+        3 = "web"
+    }
 
-# }
+}
+
+variable "tier_tags" {
+  type = map(string)
+  description = "(optional) describe your variable"
+  default = {
+    "Project_Name" = ""
+    "Environment" = ""
+    "Cost_center" = ""
+  }
+}
 
 # variable "tags" {
 #     description = "(optional) describe your variable"
