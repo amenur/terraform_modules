@@ -44,12 +44,6 @@ variable "dynamodb_encryption" {
   default     = true
 }
 
-variable "enable_logging" {
-  type = number
-  description = "(optional) Enable/Disable the logging feature in backend bucket"
-  default = 1
-}
-
 variable "log_prefix" {
   type = string
   description = "(optional) Prefix for path in the bucket to store logs"
