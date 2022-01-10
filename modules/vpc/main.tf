@@ -1,4 +1,5 @@
 data "aws_availability_zones" "available" {
+  region = data.terraform_remote_state.outputs.region
   state = "available"
 
 }
