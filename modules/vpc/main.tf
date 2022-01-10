@@ -20,7 +20,7 @@ resource "aws_subnet" "public" {
   for_each = var.public_cidr_block
   vpc_id                          = aws_vpc.this.id
   cidr_block                      = each.value
-  availability_zone_id            = data.aws_availability_zones.available[each.key]
+  availability_zone_id            = local.az_names[each.key]
   ipv6_cidr_block                 = cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, each.key)
   assign_ipv6_address_on_creation = true
 
