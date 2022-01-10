@@ -22,3 +22,6 @@ output "public_ips" {
     value = values(aws_subnet.public)[*].cidr_block
 }
 
+output "tags" {
+    value = values(aws_subnet.public)[*].tags
+}
