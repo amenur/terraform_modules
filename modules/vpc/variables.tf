@@ -15,6 +15,11 @@ variable "public_cidr_block" {
   default     = ["10.16.48.0/20", "10.16.112.0/20", "10.16.176.0/20"]
 }
 
+variable "region" {
+  type = string
+  description = "(required) Region for deploy the infrastructure"
+}
+
 # variable "private_cidr_block" {
 #     type = list(string)
 #     description = "(required) List of private subnets ip's"
