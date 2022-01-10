@@ -22,6 +22,10 @@ output "public_ips" {
     value = values(aws_subnet.public)[*].cidr_block
 }
 
-output "tags" {
+output "public_subnet_tags" {
     value = values(aws_subnet.public)[*].tags
+}
+
+output "vpc_tags" {
+    value = aws_vpc.this.tags
 }
