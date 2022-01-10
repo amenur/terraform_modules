@@ -13,8 +13,10 @@ resource "aws_vpc" "this" {
   enable_dns_support               = true
   assign_generated_ipv6_cidr_block = true
 
-  # tags = var.tags
-
+  tags = merge(
+    var.vpc_tags,
+    var.project_tags,
+  )
 }
 
 resource "aws_subnet" "public" {

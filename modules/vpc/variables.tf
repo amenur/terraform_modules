@@ -42,12 +42,13 @@ variable "project_tags" {
   }
 }
 
-# variable "tags" {
-#     description = "(optional) describe your variable"
-#     type = object({
-
-#     })
-# }
+variable "tags" {
+    description = "(optional) describe your variable"
+    type = map(string)
+    default = {
+      Name = ""
+    }
+}
 
 
 
