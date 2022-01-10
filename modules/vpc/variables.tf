@@ -33,7 +33,7 @@ variable "subnet_names" {
 
 }
 
-variable "tier_tags" {
+variable "project_tags" {
   type = map(string)
   description = "(optional) describe your variable"
   default = {
