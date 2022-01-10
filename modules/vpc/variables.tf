@@ -42,7 +42,7 @@ variable "project_tags" {
   }
 }
 
-variable "tags" {
+variable "vpc_tags" {
     description = "(optional) describe your variable"
     type = map(string)
     default = {
