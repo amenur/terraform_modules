@@ -15,10 +15,6 @@ variable "public_cidr_block" {
   default     = ["10.16.48.0/20", "10.16.112.0/20", "10.16.176.0/20"]
 }
 
-variable "newbits" {
-  type = number
-  description = "(required) cidrsubnet ip + newbits = new subnet ip"
-}
 
 # variable "private_cidr_block" {
 #     type = list(string)
