@@ -18,7 +18,7 @@ resource "aws_vpc" "this" {
 
 resource "aws_subnet" "public" {
   vpc_id                          = aws_vpc.this.id
-  count                           = length(data.aws_availability_zones.available)
+  count                           = length(data.aws_availability_zones.available.names)
   cidr_block                      = var.public_cidr_block[count.index]
   availability_zone_id            = data.aws_availability_zones.available[count.index]
   ipv6_cidr_block                 = cidrsubnet(aws_vpc.this.ipv6_cidr_block, 8, count.index)
