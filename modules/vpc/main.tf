@@ -5,6 +5,9 @@ data "aws_availability_zones" "available" {
 locals {
   subnet_prefix = "sn"
   az_names = data.aws_availability_zones.available.names
+  name_tag = {
+    "Name" = "${local.subnet_prefix}-${var.subnet_names[each.key]}-${local.az_names[each.key]}"
+  }
 }
 resource "aws_vpc" "this" {
   cidr_block                       = var.cidr_block
@@ -25,8 +28,9 @@ resource "aws_subnet" "public" {
   assign_ipv6_address_on_creation = true
 
 
-  tags = {
-    "Name" = "${local.subnet_prefix}-${var.subnet_names[each.key]}-${local.az_names[each.key]}",
-    "Tags" = var.project_tags
-  }
+  tags = "${merge(
+      local.name_tag, 
+      var.project_tags,
+    )
+  }"
 }
