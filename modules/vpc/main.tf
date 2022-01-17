@@ -26,12 +26,12 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
 
-  # tags = merge(
-  #     var.project_tags,
-  #   {
-  #     "Name" = "${local.az_names[each.key]}"
-  #   },
-  # )
+  tags = merge(
+      var.project_tags,
+    {
+      "Name" = "${local.sn}-${var.public_names[count.index]}-public"
+    },
+  )
 }
 
 
@@ -42,6 +42,13 @@ resource "aws_subnet" "private" {
   vpc_id = aws_vpc.this.id
   cidr_block = element(var.private_cidr_block, count.index)
   availability_zone = element(local.az_names, count.index)
+  
+  tags = merge(
+    var.project_tags,
+    {
+      "Name" = "${local.sn}-${local.private_names[count.index]}"
+    },
+  )
 }
 
 

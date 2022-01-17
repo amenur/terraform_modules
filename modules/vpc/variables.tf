@@ -3,6 +3,32 @@ variable "profile" {
     description = "(optional) describe your variable"
 }
 
+
+# variable "region" {
+#   type        = string
+#   description = "Region for deploy the Infrastructure"
+#   default     = "eu-west-1"
+# }
+
+variable "project_name" {
+  type        = string
+  description = "Name of the project"
+  default = "Aws - Animals4Life"
+}
+
+variable "env" {
+  type        = string
+  description = "Environment of the deployment"
+  default = "dev"
+}
+
+variable "cost_center" {
+  type        = string
+  description = "(optional) describe your variable"
+  default = ""
+}
+
+
 #########################################################
 # VPC Configuration
 #########################################################
@@ -10,36 +36,6 @@ variable "vpc_cidr_block" {
   type        = string
   description = "(required) VPC cidr block list"
   default     = "10.16.0.0/16"
-}
-
-###########################################################
-# Public Subnet Configurations
-###########################################################
-variable "public_cidr_block" {
-  type        = list(any)
-  description = "(required) List of public subnets ip's"
-}
-
-
-# variable "private_cidr_block" {
-#     type = list(string)
-#     description = "(required) List of private subnets ip's"
-#     default = [ "10.16.0.0/20", "10.16.16.0/20", "10.16.32.0/20", "10.16.64.0/20", "10.16.80.0/20", "10.16.96.0/20", "10.16.128.0/20", "10.16.144.0/20", "10.16.160.0/20" ]
-# }
-
-# variable "public_names" {
-#     type = map(string)
-#     description = "(optional) List of public subnets names"
-#     default = {
-#         0 = "web-A"
-#         1 = "web-B"
-#         2 = "web-C"
-#     }
-
-# }
-variable "count_public" {
-  type = number
-  description = "(optional) describe your variable"
 }
 
 variable "project_tags" {
@@ -59,6 +55,34 @@ variable "vpc_tags" {
       Name = ""
     }
 }
+
+###########################################################
+# Public Subnet Configurations
+###########################################################
+variable "public_cidr_block" {
+  type        = list(any)
+  description = "(required) List of public subnets ip's"
+}
+
+
+# variable "private_cidr_block" {
+#     type = list(string)
+#     description = "(required) List of private subnets ip's"
+#     default = [ "10.16.0.0/20", "10.16.16.0/20", "10.16.32.0/20", "10.16.64.0/20", "10.16.80.0/20", "10.16.96.0/20", "10.16.128.0/20", "10.16.144.0/20", "10.16.160.0/20" ]
+# }
+
+variable "public_names" {
+    type = list(string)
+    description = "(optional) List of public subnets names"
+    default = ["web-A", "web-B", "web-C"]
+    }
+
+# }
+variable "count_public" {
+  type = number
+  description = "(optional) describe your variable"
+}
+
 
 #############################################################
 # Private Subnets Configuration
@@ -84,6 +108,16 @@ variable "vpc_tags" {
 #     max_private_subnets = "3"
 #   }
 # }
+
+locals {
+  sn = "sn"
+  az_initial = ["A", "B", "C"]
+  private_names = flatten([
+     [for i in range(0, 3, 1) : "reserved-${local.az_initial[i]}"],  
+     [for i in range(0, 3, 1) : "db-${local.az_initial[i]}"],
+     [for i in range(0, 3, 1) : "app-${local.az_initial[i]}"],
+  ])
+}
 
 variable "newbits" {
   type = number
@@ -147,31 +181,4 @@ variable "count_private" {}
 #           if index(local.az_names, az) < local.max_private_subnets
 #     ]
 #   }
-# }
-
-# variable "region" {
-#   type        = string
-#   description = "Region for deploy the Infrastructure"
-#   default     = "eu-west-1"
-# }
-
-# variable "profile" {
-#   type        = string
-#   description = "Profile used for infrastructure provisioning"
-#   default     = "aramis"
-# }
-
-# variable "project_name" {
-#   type        = string
-#   description = "Name of the project"
-# }
-
-# variable "env" {
-#   type        = string
-#   description = "Environment of the deployment"
-# }
-
-# variable "cost_center" {
-#   type        = string
-#   description = "(optional) describe your variable"
 # }
