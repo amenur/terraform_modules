@@ -11,19 +11,20 @@ output "vpc_arn" {
 }
 
 output "public_id" {
-    value = values(aws_subnet.public)[*].id
+    #value = values(aws_subnet.public)[*].id
+    value = aws_subnet.public[*].id
 }
 
 output "public_arn" {
-    value = values(aws_subnet.public)[*].arn
+    value = aws_subnet.public[*].arn
 }
 
 output "public_ips" {
-    value = values(aws_subnet.public)[*].cidr_block
+    value = aws_subnet.public[*].cidr_block
 }
 
 output "public_subnet_tags" {
-    value = values(aws_subnet.public)[*].tags
+    value = aws_subnet.public[*].tags
 }
 
 output "vpc_tags" {
