@@ -10,23 +10,23 @@ variable "profile" {
 #   default     = "eu-west-1"
 # }
 
-variable "project_name" {
-  type        = string
-  description = "Name of the project"
-  default = "Aws - Animals4Life"
-}
+# variable "project_name" {
+#   type        = string
+#   description = "Name of the project"
+#   default = "Aws - Animals4Life"
+# }
 
-variable "env" {
-  type        = string
-  description = "Environment of the deployment"
-  default = "dev"
-}
+# variable "env" {
+#   type        = string
+#   description = "Environment of the deployment"
+#   default = "dev"
+# }
 
-variable "cost_center" {
-  type        = string
-  description = "(optional) describe your variable"
-  default = ""
-}
+# variable "cost_center" {
+#   type        = string
+#   description = "(optional) describe your variable"
+#   default = ""
+# }
 
 
 #########################################################
@@ -42,8 +42,8 @@ variable "project_tags" {
   type = map(string)
   description = "(optional) describe your variable"
   default = {
-    "Project_Name" = ""
-    "Environment" = ""
+    "Project_Name" = "aws-animals4life-poc"
+    "Environment" = "dev"
     "Cost_center" = ""
   }
 }
@@ -52,7 +52,7 @@ variable "vpc_tags" {
     description = "(optional) describe your variable"
     type = map(string)
     default = {
-      Name = ""
+      Name = "animals4life-vpc"
     }
 }
 
@@ -134,8 +134,6 @@ variable "prefix" {
 
 locals {
 
-    subnet_prefix = "sn"
-    
     az_ids = data.aws_availability_zones.available.zone_ids
     az_names = data.aws_availability_zones.available.names
 }
