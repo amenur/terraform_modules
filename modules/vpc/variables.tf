@@ -50,10 +50,8 @@ variable "project_tags" {
 
 variable "vpc_tags" {
     description = "(optional) describe your variable"
-    type = map(string)
-    default = {
-      Name = "animals4life-vpc"
-    }
+    type = string
+    default = "animals4life-vpc"
 }
 
 ###########################################################
