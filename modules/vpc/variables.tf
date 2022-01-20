@@ -117,6 +117,13 @@ locals {
   ])
 }
 
+
+variable "module_enabled_ngw" {
+  type = bool
+  description = "(optional) Enable/Disable NAT Gateways and EIP for each AZ in the Public Subnets"
+  default = true
+}
+
 variable "newbits" {
   type = number
   description = "(optional) describe your variable"

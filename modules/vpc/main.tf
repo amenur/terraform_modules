@@ -107,7 +107,8 @@ resource "aws_default_route_table" "main_route_table_private" {
 # Create ELASTIC IP for assign static ip address to the NAT GATEWAYS
 resource "aws_eip" "ngw_eip" {
   # TODO crear condición de enable para la creación
-  count = var.count_public
+  count = var.module_enabled_ngw ? var.count_public : 0
+  
 
   vpc = true
   depends_on = [
@@ -117,7 +118,7 @@ resource "aws_eip" "ngw_eip" {
 
 resource "aws_nat_gateway" "ngw" {
   # TODO crear condición de enable para la creación
-  count = var.count_public
+  count = var.module_enabled_ngw ? var.count_public : 0
 
   allocation_id = aws_eip.ngw_eip.*.id[count.index]
   subnet_id = aws_subnet.public.*.id[count.index]
@@ -143,6 +144,22 @@ resource "aws_route_table" "private" {
   
 }
 
+resource "aws_route" "private_to_ngw" {
+  count = var.module_enabled_ngw ? var.count_private : 0
+
+  route_table_id = aws_route_table.private.*.id[count.index]
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id = aws_nat_gateway.ngw.*.id[count.index % var.count_public]
+
+}
+
+resource "aws_route_table_association" "private-association" {
+  count = var.count_private
+
+  subnet_id = aws_subnet.private.*.id[count.index]
+  route_table_id = aws_route_table.private.*.id[count.index]
+  
+}
 
 
 
