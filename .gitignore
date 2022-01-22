@@ -1,0 +1,6 @@
+.terraform* 
+*.plan* 
+*.out* 
+*.json 
+*.son
+*.tfvars
