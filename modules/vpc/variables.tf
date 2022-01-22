@@ -81,6 +81,41 @@ variable "count_public" {
   description = "(optional) describe your variable"
 }
 
+# Public Security Group
+
+variable "public_sg_description" {
+  type = string
+  description = "(optional) describe your variable"
+  default = "Default security group for public subnets"
+}
+
+variable "ingress_from_port" {
+  type = number
+  description = "(optional) the number of the ingres port in the public security group"
+  default = 22
+}
+
+variable "ingress_to_port" {
+  type = number
+  description = "(optional) describe your variable"
+  default = 22
+}
+
+variable "ingress_protocol" {
+  type = string
+  description = "(optional) describe your variable"
+  default = "tcp"
+}
+
+locals {
+  egress = {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_block = ["0.0.0.0/0"]
+  }
+}
+
 
 #############################################################
 # Private Subnets Configuration
@@ -111,9 +146,12 @@ locals {
   sn = "sn"
   az_initial = ["A", "B", "C"]
   private_names = flatten([
-     [for i in range(0, 3, 1) : "reserved-${local.az_initial[i]}"],  
-     [for i in range(0, 3, 1) : "db-${local.az_initial[i]}"],
-     [for i in range(0, 3, 1) : "app-${local.az_initial[i]}"],
+     #[for i in range(0, 3, 1) : "reserved-${local.az_initial[i]}"],
+     [for i in range(0, 3, 1) : "${local.tier_names[0]}-${local.az_initial[i]}"],
+     [for i in range(0, 3, 1) : "${local.tier_names[1]}-${local.az_initial[i]}"],
+     [for i in range(0, 3, 1) : "${local.tier_names[2]}-${local.az_initial[i]}"],    
+    #  [for i in range(0, 3, 1) : "db-${local.az_initial[i]}"],
+    #  [for i in range(0, 3, 1) : "app-${local.az_initial[i]}"],
   ])
 }
 
@@ -139,6 +177,8 @@ variable "prefix" {
 
 locals {
 
+    tier_names = ["reserved", "db", "app"]
+
     az_ids = data.aws_availability_zones.available.zone_ids
     az_names = data.aws_availability_zones.available.names
 }
@@ -147,7 +187,11 @@ variable "private_cidr_block" {}
 
 variable "count_private" {}
 
-
+variable "private_subnets_per_tier" {
+  type = number
+  description = "(optional) describe your variable"
+  default = 3
+}
 
   # locals{
   #   tiers = {

@@ -106,7 +106,6 @@ resource "aws_default_route_table" "main_route_table_private" {
 
 # Create ELASTIC IP for assign static ip address to the NAT GATEWAYS
 resource "aws_eip" "ngw_eip" {
-  # TODO crear condición de enable para la creación
   count = var.module_enabled_ngw ? var.count_public : 0
   
 
@@ -117,7 +116,6 @@ resource "aws_eip" "ngw_eip" {
 }
 
 resource "aws_nat_gateway" "ngw" {
-  # TODO crear condición de enable para la creación
   count = var.module_enabled_ngw ? var.count_public : 0
 
   allocation_id = aws_eip.ngw_eip.*.id[count.index]
