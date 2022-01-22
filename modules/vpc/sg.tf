@@ -1,26 +1,111 @@
 
+resource "aws_default_security_group" "default_sg" {
+    vpc_id = aws_vpc.this.id
+
+    tags = merge(
+        var.project_tags,
+        {
+            Name = "${var.vpc_tags}"
+        }
+    )
+  
+}
+
 resource "aws_security_group" "public" {
-    count = var.count_public
-    
-    name = "${var.public_names[count.index]}-public-sg"
+
+    name = "web-public-sg"
     description = var.public_sg_description
     vpc_id = aws_vpc.this.id
 
     dynamic "ingress" {
-        for_each = var.public_cidr_block
-        content { 
-            from_port = var.ingress_from_port
-            to_port = var.ingress_to_port
-            protocol = var.ingress_protocol
-            cidr_blocks = ["${aws_subnet.public.*.cidr_block[count.index]}"]
+
+        for_each = [for i in local.public_security_groups:
+            {
+            from_port = i.from_port
+            to_port = i.to_port
+            protocol = i.protocol
+            description = i.description
+            }
+        ]
+
+        content {
+            from_port = ingress.value.from_port
+            to_port = ingress.value.to_port
+            protocol = ingress.value.protocol
+            description = ingress.value.description
+            cidr_blocks = ["0.0.0.0/0"]
         }
+
     }
 
     egress {
-        from_port = local.egress.from_port
-        to_port = local.egress.to_port
-        protocol = local.egress.protocol
-        cidr_blocks = local.egress.cidr_block
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
+  
+}
+
+resource "aws_security_group" "app" {
+
+    name = "${local.tier_names[2]}-sg"
+    description = "db-tier-sg"
+    vpc_id = aws_vpc.this.id
+
+    dynamic "ingress" {
+
+        for_each = [for i in local.private_security_group_app:
+            {
+            from_port = i.from_port
+            to_port = i.to_port
+            protocol = i.protocol
+            description = i.description
+            security_groups = [aws_security_group.public.id]
+
+            }
+        ]
+
+        content {
+            from_port = ingress.value.from_port
+            to_port = ingress.value.to_port
+            protocol = ingress.value.protocol
+            description = ingress.value.description
+            security_groups = [aws_security_group.public.id]
+        }
+
+    }
+  
+  
+}
+
+resource "aws_security_group" "db" {
+
+    name = "${local.tier_names[1]}-sg"
+    description = "db-tier-sg"
+    vpc_id = aws_vpc.this.id
+
+    dynamic "ingress" {
+
+        for_each = [for i in local.private_security_group_db:
+            {
+            from_port = i.from_port
+            to_port = i.to_port
+            protocol = i.protocol
+            description = i.description
+            security_groups = [aws_security_group.public.id]
+
+            }
+        ]
+
+        content {
+            from_port = ingress.value.from_port
+            to_port = ingress.value.to_port
+            protocol = ingress.value.protocol
+            description = ingress.value.description
+            security_groups = [aws_security_group.public.id]
+        }
+
     }
   
 }
@@ -32,26 +117,27 @@ resource "aws_security_group" "reserved" {
     vpc_id = aws_vpc.this.id 
 
     dynamic "ingress" {
-        for_each = [for i in range(0, 130, 64) : cidrsubnet("10.16.0.0/16", 8, i)]
+
+        for_each = [for i in local.private_security_group_reserved:
+            {
+            from_port = i.from_port
+            to_port = i.to_port
+            protocol = i.protocol
+            description = i.description
+            security_groups = [aws_security_group.public.id]
+
+            }
+        ]
+
         content {
-            from_port = 22
-            to_port = 22
-            protocol = "tcp"
-            #cidr_blocks = [for i in range(0, 130, 64) : cidrsubnet("10.16.0.0/16", 8, i)]
-            security_groups = [for i in range(0, var.count_public, 1): aws_security_group.public.*.id[i]]
+            from_port = ingress.value.from_port
+            to_port = ingress.value.to_port
+            protocol = ingress.value.protocol
+            description = ingress.value.description
+            security_groups = [aws_security_group.public.id]
         }
-    }
 
-    egress {
-        from_port = 0
-        to_port = 0
-        protocol = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
     }
-
-    depends_on = [
-      aws_security_group.public
-    ]
 
 }
 

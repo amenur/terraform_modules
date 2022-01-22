@@ -90,15 +90,15 @@ variable "public_sg_description" {
 }
 
 variable "ingress_from_port" {
-  type = number
+  type = list(number)
   description = "(optional) the number of the ingres port in the public security group"
-  default = 22
+  default = [80, 443]
 }
 
 variable "ingress_to_port" {
-  type = number
+  type = list(number)
   description = "(optional) describe your variable"
-  default = 22
+  default = [80, 443]
 }
 
 variable "ingress_protocol" {
@@ -107,15 +107,45 @@ variable "ingress_protocol" {
   default = "tcp"
 }
 
-locals {
-  egress = {
-    from_port = 0
-    to_port = 0
-    protocol = "-1"
-    cidr_block = ["0.0.0.0/0"]
+variable "web_sg_ingress" {
+  type = map(any)
+  description = "(optional) describe your variable"
+  default = {
+    "from_port" = 80,
+    "to_port" = 80,
+    "protocol" = "tcp",
+    "description" = "http to public subnets",
+  }
+  
+}
+
+variable "web_sg_egress" {
+  type = map(any)
+  description = "(optional) describe your variable"
+  default = {
+    "from_port" = 80
+    "to_port" = 80
+    "protocol" = "tcp"
+    "description" = "http from public subnets"
   }
 }
 
+locals {
+  public_security_groups = {
+    http = {
+      from_port = 80
+      to_port = 80
+      protocol = "tcp"
+      description = "http"
+    }
+    https = {
+      from_port = 443
+      to_port = 443
+      protocol = "tcp"
+      description = "https"
+    }
+  }
+}
 
 #############################################################
 # Private Subnets Configuration
@@ -182,6 +212,35 @@ locals {
     az_ids = data.aws_availability_zones.available.zone_ids
     az_names = data.aws_availability_zones.available.names
 }
+
+locals {
+  private_security_group_app = {
+    ingress = {
+      from_port = 22
+      to_port = 22
+      protocol = "tcp"
+      description = "ssh"
+    }
+  }
+  private_security_group_db = {
+    db = {
+      from_port = 5432
+      to_port = 5432
+      protocol = "tcp"
+      description = "PostgreSQL Port"
+    }
+  }
+  private_security_group_reserved = {
+    reserved = {
+      from_port = 22
+      to_port = 22
+      protocol = "tcp"
+      description = "ssh"
+    }
+  }
+
+}
+
 
 variable "private_cidr_block" {}
 
