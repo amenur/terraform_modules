@@ -17,6 +17,13 @@ resource "aws_security_group" "public" {
     description = var.public_sg_description
     vpc_id = aws_vpc.this.id
 
+    tags = merge(
+        var.project_tags,
+        {
+            Name = "${var.vpc_tags}-web-public-sg"
+        }
+    )
+
     dynamic "ingress" {
 
         for_each = [for i in local.public_security_groups:
@@ -53,6 +60,13 @@ resource "aws_security_group" "app" {
     description = "db-tier-sg"
     vpc_id = aws_vpc.this.id
 
+    tags = merge(
+        var.project_tags,
+        {
+            Name = "${var.vpc_tags}-${local.tier_names[2]}-sg"
+        }
+    )
+
     dynamic "ingress" {
 
         for_each = [for i in local.private_security_group_app:
@@ -85,6 +99,13 @@ resource "aws_security_group" "db" {
     description = "db-tier-sg"
     vpc_id = aws_vpc.this.id
 
+    tags = merge(
+        var.project_tags,
+        {
+            Name = "${var.vpc_tags}-${local.tier_names[1]}-sg"
+        }
+    )
+
     dynamic "ingress" {
 
         for_each = [for i in local.private_security_group_db:
@@ -115,6 +136,13 @@ resource "aws_security_group" "reserved" {
     name = "${local.tier_names[0]}-sg"
     description = "reserved-tier-sg"
     vpc_id = aws_vpc.this.id 
+
+    tags = merge(
+        var.project_tags,
+        {
+            Name = "${var.vpc_tags}-${local.tier_names[0]}-sg"
+        }
+    )
 
     dynamic "ingress" {
 

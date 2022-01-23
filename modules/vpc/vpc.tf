@@ -110,6 +110,13 @@ resource "aws_eip" "ngw_eip" {
   
 
   vpc = true
+
+  tags = merge(
+    var.project_tags,
+  {
+    Name = "${var.vpc_tags}-eip-ngw"
+  })
+  
   depends_on = [
     aws_internet_gateway.igw
   ]
@@ -137,7 +144,7 @@ resource "aws_route_table" "private" {
   tags = merge(
     var.project_tags,
   {
-    Name = "${var.vpc_tags}-private-'${local.az_names[count.index]}'-rt"
+    Name = "${var.vpc_tags}-private-${local.az_names[count.index]}-rt"
   })
   
 }
