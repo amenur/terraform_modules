@@ -147,6 +147,20 @@ locals {
   }
 }
 
+locals {
+  route_tables_tiers = [
+    aws_route_table.private.*.id[0],
+    aws_route_table.private.*.id[1],
+    aws_route_table.private.*.id[2],
+    aws_route_table.private.*.id[0],
+    aws_route_table.private.*.id[1],
+    aws_route_table.private.*.id[2],
+    aws_route_table.private.*.id[0],
+    aws_route_table.private.*.id[1],
+    aws_route_table.private.*.id[2],
+  ]
+}
+
 #############################################################
 # Private Subnets Configuration
 #############################################################

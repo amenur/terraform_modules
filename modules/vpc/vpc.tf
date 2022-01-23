@@ -130,24 +130,24 @@ resource "aws_nat_gateway" "ngw" {
 }
 
 resource "aws_route_table" "private" {
-  count = var.count_private
+  count = var.count_public 
 
   vpc_id = aws_vpc.this.id
 
   tags = merge(
     var.project_tags,
   {
-    Name = "${var.vpc_tags}-private-'${aws_subnet.private.*.tags.Name[count.index]}'-rt"
+    Name = "${var.vpc_tags}-private-'${local.az_names[count.index]}'-rt"
   })
   
 }
 
 resource "aws_route" "private_to_ngw" {
-  count = var.module_enabled_ngw ? var.count_private : 0
+  count = var.module_enabled_ngw ? var.count_public : 0
 
   route_table_id = aws_route_table.private.*.id[count.index]
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id = aws_nat_gateway.ngw.*.id[count.index % var.count_public]
+  gateway_id = aws_nat_gateway.ngw.*.id[count.index]
 
 }
 
@@ -155,7 +155,7 @@ resource "aws_route_table_association" "private-association" {
   count = var.count_private
 
   subnet_id = aws_subnet.private.*.id[count.index]
-  route_table_id = aws_route_table.private.*.id[count.index]
+  route_table_id = element(local.route_tables_tiers, count.index)
   
 }
 
