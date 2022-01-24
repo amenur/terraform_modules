@@ -54,6 +54,12 @@ variable "vpc_tags" {
     default = "animals4life-vpc"
 }
 
+variable "module_enabled_vpc_flow_log" {
+  type = bool
+  description = "(optional) Enable/Disable VPC Flow Logs to CloudWatch (everything you need)"
+  default = true
+}
+
 ###########################################################
 # Public Subnet Configurations
 ###########################################################
