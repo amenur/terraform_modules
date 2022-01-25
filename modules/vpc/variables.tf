@@ -60,6 +60,12 @@ variable "module_enabled_vpc_flow_log" {
   default = true
 }
 
+variable "kms_key_alias" {
+  type = string
+  description = "(optional) Alias for the KMS key used for encrypt vpc flow logs in CloudWatch"
+  default = "alias/cloudwatch-vpc-flow-logs"
+}
+
 ###########################################################
 # Public Subnet Configurations
 ###########################################################
@@ -151,6 +157,77 @@ locals {
       description = "https"
     }
   }
+
+  public_nacl = {
+    http_ingress = {
+      rule_number = 100
+      egress = false
+      protocol = "tcp"
+      rule_action = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port = 80
+      to_port = 80
+      
+    }
+    https_ingress = {
+      rule_number = 101
+      egress = false
+      protocol = "tcp"
+      rule_action = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port = 443
+      to_port = 443
+      
+    }
+    ssh_ingress = {
+      rule_number = 103
+      egress = false
+      protocol = "tcp"
+      rule_action = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port = 22
+      to_port = 22
+      
+    }
+    http_ingress = {
+      rule_number = 100
+      egress = true
+      protocol = "tcp"
+      rule_action = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port = 80
+      to_port = 80
+      
+    }
+    https_ingress = {
+      rule_number = 101
+      egress = true
+      protocol = "tcp"
+      rule_action = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port = 443
+      to_port = 443
+      
+    }
+    ssh_egress = {
+      rule_number = 103
+      egress = true
+      protocol = "tcp"
+      rule_action = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port = 22
+      to_port = 22
+    }
+    custom_tcp_egress = {
+      rule_number = 199
+      egress = true
+      protocol = "tcp"
+      rule_action = "allow"
+      cidr_block = "0.0.0.0/0"
+      from_port = 1024
+      to_port = 65535
+    }
+  }
 }
 
 locals {
@@ -234,8 +311,16 @@ locals {
 }
 
 locals {
+  private_security_group_bastion = {
+      ingress = {
+      from_port = 22
+      to_port = 22
+      protocol = "tcp"
+      description = "ssh"
+    }
+  }
   private_security_group_app = {
-    ingress = {
+      ingress = {
       from_port = 22
       to_port = 22
       protocol = "tcp"
@@ -261,10 +346,142 @@ locals {
 
 }
 
+locals {
+  ##TODO --> Rules ordered by tier : Web(tier 1: 1XX), App(tier 2: 2XX), Db(tier 3: 3XX), Reserved(tier 4: 4XX)
+  private_nacl = {
+      app = {
+        # http_ingress = {
+        #   rule_number = 100
+        #   egress = false
+        #   protocol = "tcp"
+        #   rule_action = "allow"
+        #   cidr_block = "0.0.0.0/0"
+        #   from_port = 80
+        #   to_port = 80
+          
+        # }
+        # http_egress = {
+        #   rule_number = 100
+        #   egress = true
+        #   protocol = "tcp"
+        #   rule_action = "allow"
+        #   cidr_block = "0.0.0.0/0"
+        #   from_port = 80
+        #   to_port = 80
+          
+        # }
+        # https_ingress = {
+        #   rule_number = 102
+        #   egress = false
+        #   protocol = "tcp"
+        #   rule_action = "allow"
+        #   cidr_block = "0.0.0.0/0"
+        #   from_port = 443
+        #   to_port = 443
+          
+        # }
+        # https_egress = {
+        #   rule_number = 102
+        #   egress = true
+        #   protocol = "tcp"
+        #   rule_action = "allow"
+        #   cidr_block = "0.0.0.0/0"
+        #   from_port = 443
+        #   to_port = 443
+        #}
+  
+        ssh_ingress = {
+          rule_number = 200
+          egress = false
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 22
+          to_port = 22
+        }
+         ssh_egress = {
+          rule_number = 200
+          egress = true
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 22
+          to_port = 22
+        }
+        custom_tcp_egress = {
+          rule_number = 299
+          egress = true
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 1024
+          to_port = 65535
+        }
+      }
+      db = {
+        postgresql_ingress = {
+          rule_number = 300
+          egress = false
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 5432
+          to_port = 5432
+          
+        }
+        custom_tcp_egress = {
+          rule_number = 399
+          egress = true
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 1024
+          to_port = 65535
+        }
+      }
+      reserved = {
+        ssh_ingress = {
+          rule_number = 400
+          egress = false
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 22
+          to_port = 22
+          
+        }
+        ssh_egress = {
+          rule_number = 400
+          egress = true
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 22
+          to_port = 22
+          
+        }
+        custom_tcp_egress = {
+          rule_number = 499
+          egress = true
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 1024
+          to_port = 65535
+        }
+      }
+    } 
+} 
+
+
 
 variable "private_cidr_block" {}
 
-variable "count_private" {}
+variable "count_private" {
+  type = number
+  description = "(optiona) Number of private subnets per tier"
+  default = 3
+}
 
 variable "private_subnets_per_tier" {
   type = number

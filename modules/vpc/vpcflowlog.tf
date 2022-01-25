@@ -13,10 +13,25 @@ resource "aws_flow_log" "vpc_flow_log" {
   
 }
 
+# resource "aws_kms_key" "cloudwatch_key" {
+#     description = "KMS key for encrypt vpc flow logs in CloudWatch"
+#     deletion_window_in_days = 30
+#     enable_key_rotation = true
+  
+# }
+
+# resource "aws_kms_alias" "cloudwatch_key_alias" {
+#     name = var.kms_key_alias
+#     target_key_id = aws_kms_key.cloudwatch_key.id
+  
+# }
+
 resource "aws_cloudwatch_log_group" "vpc_flow_log" {
     count = var.module_enabled_vpc_flow_log ? 1 : 0
 
     name = "vpc_flow_log"
+    //kms_key_id = aws_kms_key.cloudwatch_key.id
+    retention_in_days = 1
 
 }
 
@@ -29,10 +44,10 @@ resource "aws_iam_role" "vpc_flow_log_role" {
         "Version": "2012-10-17",
         "Statement": [
         {
-            "sid": "",
+            "Sid": "",
             "Effect": "Allow",
             "Principal": {
-                "Service": "vpc-flow-logs-amazonaws.com"
+                "Service": "vpc-flow-logs.amazonaws.com"
             },
             "Action": "sts:AssumeRole"
         }

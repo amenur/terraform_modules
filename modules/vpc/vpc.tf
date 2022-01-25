@@ -131,7 +131,7 @@ resource "aws_nat_gateway" "ngw" {
   tags = merge(
     var.project_tags,
   {
-    Name = "${var.vpc_tags}-ngw"
+    Name = "${var.vpc_tags}-${local.az_names[count.index]}-ngw"
   })
   
 }
