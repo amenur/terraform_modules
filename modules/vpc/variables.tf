@@ -189,7 +189,7 @@ locals {
       to_port = 22
       
     }
-    http_ingress = {
+    http_egress = {
       rule_number = 100
       egress = true
       protocol = "tcp"
@@ -199,7 +199,7 @@ locals {
       to_port = 80
       
     }
-    https_ingress = {
+    https_egress = {
       rule_number = 101
       egress = true
       protocol = "tcp"
@@ -399,7 +399,7 @@ locals {
           from_port = 22
           to_port = 22
         }
-         ssh_egress = {
+        ssh_egress = {
           rule_number = 200
           egress = true
           protocol = "tcp"
@@ -407,6 +407,15 @@ locals {
           cidr_block = "0.0.0.0/0"
           from_port = 22
           to_port = 22
+        }
+        http_egress = {
+          rule_number = 201
+          egress = true
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 80
+          to_port = 80
         }
         custom_tcp_egress = {
           rule_number = 299
@@ -428,6 +437,15 @@ locals {
           from_port = 5432
           to_port = 5432
           
+        }
+        http_egress = {
+          rule_number = 301
+          egress = true
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 80
+          to_port = 80
         }
         custom_tcp_egress = {
           rule_number = 399
@@ -459,6 +477,15 @@ locals {
           from_port = 22
           to_port = 22
           
+        }
+        http_egress = {
+          rule_number = 401
+          egress = true
+          protocol = "tcp"
+          rule_action = "allow"
+          cidr_block = "0.0.0.0/0"
+          from_port = 80
+          to_port = 80
         }
         custom_tcp_egress = {
           rule_number = 499

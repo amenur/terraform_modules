@@ -127,6 +127,12 @@ resource "aws_security_group" "app" {
         }
 
     }
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
   
   
 }
@@ -166,6 +172,12 @@ resource "aws_security_group" "db" {
         }
 
     }
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
+    }
   
 }
 
@@ -203,6 +215,12 @@ resource "aws_security_group" "reserved" {
             security_groups = [aws_security_group.public.id]
         }
 
+    }
+    egress {
+        from_port = 0
+        to_port = 0
+        protocol = "-1"
+        cidr_blocks = ["0.0.0.0/0"]
     }
 
 }
