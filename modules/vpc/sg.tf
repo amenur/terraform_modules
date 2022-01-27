@@ -83,6 +83,7 @@ resource "aws_security_group" "bastion_host" {
             to_port = ingress.value.to_port
             protocol = ingress.value.protocol
             description = ingress.value.description
+            #TODO --> This cidr_block it's a SECURITY BREACH and YOU MUST CHANGE it before deploying it (for testing purposes only) 
             cidr_blocks = ["0.0.0.0/0"]
         }
 
