@@ -54,7 +54,7 @@ variable "vpc_tags" {
     default = "animals4life-vpc"
 }
 
-variable "module_enabled_vpc_flow_log" {
+variable "enable_vpc_flow_log" {
   type = bool
   description = "(optional) Enable/Disable VPC Flow Logs to CloudWatch (everything you need)"
   default = true
@@ -65,6 +65,19 @@ variable "kms_key_alias" {
   description = "(optional) Alias for the KMS key used for encrypt vpc flow logs in CloudWatch"
   default = "alias/cloudwatch-vpc-flow-logs"
 }
+
+variable "enable_nacls" {
+  type = bool
+  description = "Enable/Disable the use of Network ACL's in the VPC"
+  default = false
+}
+
+variable "enable_kms_key_vpc_flow_log" {
+  type = bool
+  description = "Enable/Disable the creation and use of the KMS Key for encrypt VPC Flow Logs"
+  default = false
+}
+
 
 ###########################################################
 # Public Subnet Configurations
@@ -232,15 +245,15 @@ locals {
 
 locals {
   route_tables_tiers = [
-    aws_route_table.private.*.id[0],
-    aws_route_table.private.*.id[1],
-    aws_route_table.private.*.id[2],
-    aws_route_table.private.*.id[0],
-    aws_route_table.private.*.id[1],
-    aws_route_table.private.*.id[2],
-    aws_route_table.private.*.id[0],
-    aws_route_table.private.*.id[1],
-    aws_route_table.private.*.id[2],
+    aws_route_table.private_route_table.*.id[0],
+    aws_route_table.private_route_table.*.id[1],
+    aws_route_table.private_route_table.*.id[2],
+    aws_route_table.private_route_table.*.id[0],
+    aws_route_table.private_route_table.*.id[1],
+    aws_route_table.private_route_table.*.id[2],
+    aws_route_table.private_route_table.*.id[0],
+    aws_route_table.private_route_table.*.id[1],
+    aws_route_table.private_route_table.*.id[2],
   ]
 }
 
@@ -283,7 +296,7 @@ locals {
 }
 
 
-variable "module_enabled_ngw" {
+variable "enable_ngw" {
   type = bool
   description = "(optional) Enable/Disable NAT Gateways and EIP for each AZ in the Public Subnets"
   default = true

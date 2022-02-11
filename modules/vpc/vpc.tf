@@ -106,7 +106,7 @@ resource "aws_default_route_table" "main_route_table_private" {
 
 # Create ELASTIC IP for assign static ip address to the NAT GATEWAYS
 resource "aws_eip" "ngw_eip" {
-  count = var.module_enabled_ngw ? var.count_public : 0
+  count = var.enable_ngw ? var.count_public : 0
   
 
   vpc = true
@@ -123,7 +123,7 @@ resource "aws_eip" "ngw_eip" {
 }
 
 resource "aws_nat_gateway" "ngw" {
-  count = var.module_enabled_ngw ? var.count_public : 0
+  count = var.enable_ngw ? var.count_public : 0
 
   allocation_id = aws_eip.ngw_eip.*.id[count.index]
   subnet_id = aws_subnet.public.*.id[count.index]
@@ -136,7 +136,7 @@ resource "aws_nat_gateway" "ngw" {
   
 }
 
-resource "aws_route_table" "private" {
+resource "aws_route_table" "private_route_table" {
   count = var.count_public 
 
   vpc_id = aws_vpc.this.id
@@ -150,9 +150,9 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route" "private_to_ngw" {
-  count = var.module_enabled_ngw ? var.count_public : 0
+  count = var.enable_ngw ? var.count_public : 0
 
-  route_table_id = aws_route_table.private.*.id[count.index]
+  route_table_id = aws_route_table.private_route_table.*.id[count.index]
   destination_cidr_block = "0.0.0.0/0"
   gateway_id = aws_nat_gateway.ngw.*.id[count.index]
 
@@ -165,33 +165,3 @@ resource "aws_route_table_association" "private-association" {
   route_table_id = element(local.route_tables_tiers, count.index)
   
 }
-
-
-
-
-
-
-
-
-
-# resource "aws_subnet" "private" {
-#   count = var.azs
-#   vpc_id = aws_vpc.this.id
-#   cidr_block = cidrsubnet(var.private_cidr_block)
-#   availability_zone_id = local.az_ids[count.index]
-  
-# }
-
-# resource "aws_subnet" "private" {
-#   for_each = local.tiers.reserved_tier 
-
-#   vpc_id                          = aws_vpc.this.id
-#   cidr_block                      = local.reserved_tier[each.value.cidr]
-#   availability_zone               = local.reserved_tier[each.value.availability_zone]
-#   ipv6_cidr_block                 = local.reserved_tier[each.value.assig_ipv6_cidr_block]
-#   assign_ipv6_address_on_creation = local.reserved_tier[each.value.assign_ipv6_address_on_creation]
-
-#   tags = {
-#     "Name" = local.reserved_tier[each.key]
-#   }
-# }
