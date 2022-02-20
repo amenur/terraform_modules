@@ -126,6 +126,11 @@ output "public_network_acl_arn" {
     value = try(var.enable_nacls ? [for i in var.count_public : aws_network_acl.public[*].arn] : "")
 }
 
+output "public_security_group" {
+    value = aws_security_group.public.id
+}
+
+
 
 #####################################
 ######### Private Subnets OUTPUTS ###
@@ -167,6 +172,21 @@ output "nat_private_ips" {
 output "private_network_acl_id" {
     value = try(var.enable_nacls ? [for i in var.count_private : aws_network_acl.private_app[*].id] : "")
 }
+
+output "private_security_group_app" {
+    value = aws_security_group.app.id
+}
+
+output "private_security_group_db" {
+    value = aws_security_group.db.id
+}
+
+output "private_security_group_reserved" {
+    value = aws_security_group.reserved.id
+}
+
+
+
 
 # ---------------------------------
 #
