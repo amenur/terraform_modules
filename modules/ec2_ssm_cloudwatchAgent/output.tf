@@ -1,12 +1,12 @@
 output "ip_instance" {
-  value = aws_instance.web.public_ip
+  value = aws_instance.this[*].public_ip
 }
 
 output "id_instance" {
-    value = aws_instance.web.id
+  value = aws_instance.this[*].id
 }
 
 output "ssh" {
-  value = "ssh -l ubuntu ${aws_instance.web.public_ip}"
+  value = "ssh -l ec2-user ${aws_instance.this[0].public_ip}"
 }
 

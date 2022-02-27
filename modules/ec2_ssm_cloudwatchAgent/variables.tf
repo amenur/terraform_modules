@@ -1,13 +1,16 @@
 
 
 locals {
-  name_self_ami = "${var.project_name}-${var.self_ami_name}"
-  name_new_ami = "${var.project_name}-${var.new_ami_name}"
-  vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
-  az = data.terraform_remote_state.vpc.outputs.availability_zones.names[0]
-  subnet = data.terraform_remote_state.vpc.outputs.public_subnet
-  public_sg = data.terraform_remote_state.vpc.outputs.public_security_group
-  private_sg = data.terraform_remote_state.vpc.outputs.private_security_group
+
+  name_self_ami       = "${var.self_ami_name}-${var.project_tags.Project_Name}"
+  name_new_ami        = var.new_ami_name
+  vpc_id              = data.terraform_remote_state.vpc.outputs.vpc_id
+  az                  = data.terraform_remote_state.vpc.outputs.availability_zones[0].id
+  subnet              = data.terraform_remote_state.vpc.outputs.public_subnets_id[0]
+  public_sg           = data.terraform_remote_state.vpc.outputs.public_security_group[0]
+  private_sg_app      = data.terraform_remote_state.vpc.outputs.private_security_group_app[0]
+  private_sg_bd       = data.terraform_remote_state.vpc.outputs.private_security_group_db[0]
+  private_sg_reserved = data.terraform_remote_state.vpc.outputs.private_security_group_reserved[0]
 
 }
 
@@ -16,51 +19,57 @@ locals {
 # -----------------------------------------------------------
 
 variable "enable_ssh_key_ssm_param_store" {
-  type = bool
+  type        = bool
   description = "Enable/Disable SSM Parameter Store in SSH Keys"
-  default = false
+  default     = false
 }
 
 variable "enable_ssh_key_pem_local" {
-  type = bool
+  type        = bool
   description = "Enable/Disable Local SSH Key Pair Store"
-  default = true
+  default     = true
 }
 
 variable "enable_public_sg" {
-  type = bool
+  type        = bool
   description = "Enable/Disable Public Security Group for the instance"
-  default = false
+  default     = false
 }
 
 variable "enable_private_sg" {
-  type = bool
+  type        = bool
   description = "Enable/Disable Public Security Group for the instance"
-  default = true
+  default     = true
 }
 
 variable "enable_new_ami" {
-  type = bool
+  type        = bool
   description = "Enable/Disable New AMI Creation"
-  default = false
+  default     = false
 }
 
 variable "enable_self_ami" {
-  type = bool
+  type        = bool
   description = "Enable/Disable Self AMI for an instance"
-  default = true
+  default     = true
 }
 
 variable "enable_new_instance" {
-  type = bool
+  type        = bool
   description = "Enable/Disable Instance Creation"
-  default = true
+  default     = true
 }
 
 variable "enable_ebs_volume" {
-  type = bool
+  type        = bool
   description = "Enable/Disable the creation of the EBS Volume for the EC2 Instance"
-  default = true
+  default     = true
+}
+
+variable "enable_kms_ebs_encryption_key" {
+  type        = bool
+  description = "Enable/Disable the kms encryption key"
+  default     = false
 }
 
 # --------------------------------------------------------------
@@ -68,15 +77,15 @@ variable "enable_ebs_volume" {
 # --------------------------------------------------------------
 
 variable "private_key_algorithm" {
-  type = string
+  type        = string
   description = "Algorithm used for ssh key pair encryption"
-  default = "RSA"
+  default     = "RSA"
 }
 
 variable "rsa_bits" {
-  type = number
+  type        = number
   description = "Nuember of bits for the ssh key pair encryption algorithm"
-  default = 4096
+  default     = 4096
 }
 
 variable "ssh_key_path" {
@@ -90,21 +99,21 @@ variable "ssh_key_path" {
 # -----------------------------------------------------------------
 
 variable "amazon_ec2_role_for_ssm_policy_arn" {
-  type = string
+  type        = string
   description = "Policy ARN for Amazon EC2 Role For SSM"
-  default = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
+  default     = "arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM"
 }
 
 variable "cloudwatch_agent_server_policy_policy_arn" {
-  type = string
+  type        = string
   description = "Policy ARN for CloudWatch Agent"
-  default = "arn:aws:iam::aws:policy/service-role/CloudWatchAgentServerPolicy"
+  default     = "arn:aws:iam::aws:policy/service-role/CloudWatchAgentServerPolicy"
 }
 
-variable "amazon_ssm_full_access" {
-  type = string
+variable "amazon_ssm_full_access_policy_arn" {
+  type        = string
   description = "Policy ARN for SSM Full Access"
-  default = "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
+  default     = "arn:aws:iam::aws:policy/AmazonSSMFullAccess"
 }
 
 # -----------------------------------------------------------
@@ -122,19 +131,17 @@ variable "region" {
   default     = "eu-west-1"
 }
 
-
-
 variable "instance_type" {
   description = "Type of the provisioned EC2 Instance"
   type        = string
   default     = "t2.micro"
 }
 
-variable "project_name" {
-  description = "Name of the project"
-  type        = string
-  default = ""
-}
+#variable "project_name" {
+#  description = "Name of the project"
+#  type        = string
+#  default     = "Aramis-Security-Instance-POC"
+#}
 
 variable "availability_zone" {
   description = "Availability Zone to provision the infrastructure"
@@ -143,95 +150,96 @@ variable "availability_zone" {
 }
 
 variable "project_tags" {
-  type = map(string)
+  type        = map(string)
   description = "Tags of the project"
   default = {
-    Project_Name = "Aramis-Security-Instance-POC"
-    Env = "dev"
-    cost_center = "my_wallet"
+    Project_Name = "Aramis-Security-Monitoring"
+    Env          = "dev"
+    cost_center  = "my_wallet"
   }
 }
 
 variable "most_recent" {
-  type = bool
+  type        = bool
   description = "Enable/Disable the most recent search of an AMI"
-  default = true
+  default     = true
 }
 
 variable "owner" {
-  type = string
+  type        = string
   description = "Owner number of the AMI"
-  default = "amazon"
+  default     = "amazon"
 }
 
 variable "new_ami_name" {
-  type = string
+  type        = string
   description = "Name for search the new AMI"
-  default = "amzn2-ami-hvm-2.*-x86_64-gp2"
+  default     = "amzn2-ami-hvm-2.*-x86_64-gp2"
 }
 
 variable "new_ami_virtualization_type" {
-  type = string
+  type        = string
   description = "Virtualization type of the new AMI"
-  default = "hmv"
+  default     = "hmv"
 }
 
 variable "new_ami_root_device_type" {
-  type = string
+  type        = string
   description = "Root device type of the new AMI"
-  default = "ebs"
+  default     = "ebs"
 }
 
 variable "self_ami_name" {
-  type = string
+  type        = string
   description = "Self AMI Name"
+  default     = "Jenkins-SSM"
 }
 
 variable "self_ami_virtualization_type" {
-  type = string
+  type        = string
   description = "Self AMI Virtualization Type"
-  default = "hvm"
+  default     = "hvm"
 }
 
 variable "ebs_volume_size" {
-  type = number
+  type        = number
   description = "Disk Size for ebs volume"
-  default = 1
+  default     = 1
 }
 
 variable "ebs_volume_type" {
-  type = string
+  type        = string
   description = "Ebs volume type"
-  default = "gp3"
+  default     = "gp3"
 }
 
 variable "ebs_volume_encrypted" {
-  type = bool
+  type        = bool
   description = "Enable/Disable Ebs Volume Encrypted"
-  default = true
+  default     = true
 }
 
 variable "subnet_id" {
-  type = string
-  description = "ID of the subnet for placemente the instance"
-  default = ""
+  type        = string
+  description = "ID of the subnet for placement the instance"
+  default     = ""
 }
 
 variable "security_groups" {
-  type = string
+  type        = string
   description = "Security Group for the instance"
-  default = ""
+  default     = ""
 }
 
 variable "enable_ec2_monitoring" {
-  type = bool
+  type        = bool
   description = "Enable/Disable Monitoring"
-  default = true
+  default     = true
 }
 
 variable "enable_instance_termination_protection" {
-  type = bool
+  type        = bool
   description = "Enable/Disable Instance Termination Protection. Disables the possibility of executing an instance termination through the api "
-  default = true
+  default     = true
 }
 
