@@ -230,7 +230,7 @@ resource "aws_instance" "this" {
   )
 
   lifecycle {
-    ignore_changes = ["*ami"]
+    ignore_changes = [ami]
   }
 }
 
@@ -248,7 +248,7 @@ resource "aws_ebs_volume" "data" {
   tags = merge(
     var.project_tags,
     {
-      Name = "${var.project_name}-EBS-data"
+      Name = "${var.project_tags.Project_Name}-EBS-data"
     }
   )
 }

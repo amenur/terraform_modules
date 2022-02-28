@@ -192,7 +192,7 @@ variable "new_ami_root_device_type" {
 variable "self_ami_name" {
   type        = string
   description = "Self AMI Name"
-  default     = "Jenkins-SSM"
+  default     = "Jenkins-SSM*"
 }
 
 variable "self_ami_virtualization_type" {

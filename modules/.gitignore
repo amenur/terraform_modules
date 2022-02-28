@@ -1,0 +1,8 @@
+*/*/.terraform* 
+*/*/*.terraform*
+*/*/*.plan* 
+*/*/*.out* 
+*/*/*.json 
+*/*/*.son
+*/*/init.tf
+
