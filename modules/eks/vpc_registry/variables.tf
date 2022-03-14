@@ -46,11 +46,15 @@ variable "enable_single_nat_gateway" {
   description = "Enable/Disable the creation of one single nat gateway for all az's"
 }
 
-variable "enable_reuse_ips" {
-  type = bool
-  description = "Enable/Disable the reuse of ips"
-  default = true
-}
+#variable "external_nat_ip_ids" {
+#  type = string
+#  description = "External NAT IPs IDs"
+#}
+
+#variable "enable_reuse_ips" {
+#  type = bool
+#  description = "Enable/Disable the reuse of ips"
+#}
 
 variable "enable_vpn_gateway" {
   type = bool
@@ -69,17 +73,17 @@ variable "enable_dns_support" {
   default     = true
 }
 
-variable "enable_classiclink" {
-  type = bool
-  description = "Enable/Disable classiclink"
-  default = true
-}
-
-variable "enable_classlink_dns_support" {
-  type = bool
-  description = "Enable/Disable classiclink dns support"
-  default = true
-}
+#variable "enable_classiclink" {
+#  type = bool
+#  description = "Enable/Disable classiclink"
+#  default = true
+#}
+#
+#variable "enable_classlink_dns_support" {
+#  type = bool
+#  description = "Enable/Disable classiclink dns support"
+#  default = true
+#}
 
 variable "enable_flow_log" {
   type = bool
@@ -119,4 +123,16 @@ variable "private_subnet_tags" {
   type = map(string)
   description = "Private subnet tags (for EKS, is necesary to stablish)"
 }
+
+#variable "enable_ssm_endpoint" {
+#  type = bool
+#  description = "Enable/Disable VPC Endpoint for SSM Service"
+#  default = false
+#}
+#
+#variable "ssm_endpoint_private_dns_enabled" {
+#  type = bool
+#  description = "Enable/Disable DNS for SSM Private Endpoint"
+#  default = false
+#}
 

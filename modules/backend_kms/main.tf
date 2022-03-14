@@ -21,6 +21,7 @@ resource "aws_s3_bucket" "terraform_state" {
     target_bucket = var.s3_bucket_name
     target_prefix = var.log_prefix
   }
+
   lifecycle {
     prevent_destroy = true
   }

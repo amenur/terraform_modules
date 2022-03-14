@@ -49,8 +49,8 @@ resource "aws_ssm_parameter" "public_key_openssh_ssm_parameter" {
 resource "local_file" "ssh_key" {
   count = var.enable_ssh_key_pem_local || (var.enable_ssh_key_pem_local == false && var.enable_ssh_key_ssm_param_store == false) ? 1 : 0
 
-  filename = "${aws_key_pair.key_pair.key_name}.pem"
-  content  = tls_private_key.private_key.private_key_pem
+  filename        = "${aws_key_pair.key_pair.key_name}.pem"
+  content         = tls_private_key.private_key.private_key_pem
   file_permission = "0400"
 }
 
@@ -59,7 +59,7 @@ resource "local_file" "ssh_key" {
 # -----------------------------------------------------------------
 
 data "aws_security_group" "public_sg" {
-  count = var.enable_private_sg && var.enable_public_sg == false ? 1 : 0
+  #count = (var.enable_public_sg == true && var.enable_private_sg == false) ? 1 : 0
 
   filter {
     name   = "group-id"
@@ -73,7 +73,7 @@ data "aws_security_group" "public_sg" {
 }
 
 data "aws_security_group" "private_sg" {
-  count = var.enable_private_sg && var.enable_public_sg == false ? 1 : 0
+  #count = var.enable_private_sg && var.enable_public_sg == false || var.enable_private_sg && var.enable_public_sg == true || var.enable_private_sg == true ? 1 : 0
 
   filter {
     name   = "group-id"
@@ -214,9 +214,7 @@ resource "aws_instance" "this" {
   metadata_options {
     http_tokens = "required"
   }
-  vpc_security_group_ids = [
-    var.security_groups
-  ]
+  vpc_security_group_ids = var.enable_private_sg == true ? [data.aws_security_group.private_sg.id] : [data.aws_security_group.public_sg.id]
 
   root_block_device {
     encrypted = true
@@ -230,7 +228,8 @@ resource "aws_instance" "this" {
   )
 
   lifecycle {
-    ignore_changes = [ami]
+    ignore_changes  = [ami]
+    prevent_destroy = true
   }
 }
 
